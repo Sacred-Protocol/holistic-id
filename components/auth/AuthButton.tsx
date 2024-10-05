@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { signIn, signOut, useSession } from 'next-auth/react';
-import { userExists } from '@/app/services/cubid';
+import { createUser, fetchIdentity } from '@/app/services/cubid';
 
 const AuthButton = () => {
     const { data: session, status } = useSession();
@@ -11,8 +11,13 @@ const AuthButton = () => {
     useEffect(() => {
         if (status === 'authenticated') {
             if (session?.user?.email) {
-                userExists(session.user.email).then((exists) => {
-                    console.log({ exists });
+                createUser(session.user.email).then((user) => {
+                    const uuId = user.user_id;
+                    fetchIdentity(uuId).then((identity) => {
+                        if (identity?.stamp_details?.length <= 3) {
+                            //redirect to: https://allow.cubid.me/pii?uid=<cubid_uuid>&redirect_ui=http://localhost:3000
+                        }
+                    });
                 });
             }
         }
@@ -23,20 +28,6 @@ const AuthButton = () => {
         setIsLoading(true);
         try {
             const result = await signIn('google', { redirect: false });
-            console.log('Result:', { session });
-            /*if (result?.error) {
-                console.error('Sign in error:', result.error);
-                console.log('Error during sign in:', result.error);
-            } else if (result?.ok && session?.user?.email) {
-                const exists = await userExists(session.user.email);
-                if (exists) {
-                    console.log('User exists in Cubid');
-                    // Handle existing user logic
-                } else {
-                    console.log('New user, proceed with onboarding');
-                    // Handle new user logic
-                }
-            }*/
         } catch (error) {
             console.error('Error during sign in:', error);
         } finally {
