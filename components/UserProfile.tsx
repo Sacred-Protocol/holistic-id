@@ -1,21 +1,18 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import {
-    createUser,
     fetchUserData,
     fetchUserScore,
     fetchIdentity,
 } from '@/app/services/cubid';
-import { useState, useEffect } from 'react';
-import { Button } from './ui/button';
 import {
     Card,
     CardHeader,
     CardTitle,
     CardDescription,
     CardContent,
-    CardFooter,
-} from './ui/card';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
+} from '@/components/ui/card';
 
 interface UserData {
     name: string;
@@ -41,59 +38,49 @@ interface StampDetail {
     verified_date?: string;
 }
 
-export const UserDashboard = ({ email }: { email: string }) => {
+const UserProfile = ({ userId }: { userId: string }) => {
     const [userData, setUserData] = useState<UserData | null>(null);
     const [userScore, setUserScore] = useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = useState<StampDetail[]>([]);
     const [loading, setLoading] = useState(true);
-    const [userId, setUserId] = useState<string | null>(null);
-    const router = useRouter();
 
     useEffect(() => {
-        const initializeUser = async () => {
+        const fetchProfileData = async () => {
             try {
-                const userResponse = await createUser(email);
-                setUserId(userResponse.user_id);
-
                 const [userData, userScore, identity] = await Promise.all([
-                    fetchUserData(userResponse.user_id),
-                    fetchUserScore(userResponse.user_id),
-                    fetchIdentity(userResponse.user_id),
+                    fetchUserData(userId),
+                    fetchUserScore(userId),
+                    fetchIdentity(userId),
                 ]);
                 setUserData(userData);
                 setUserScore(userScore);
                 setStampDetails(identity.stamp_details);
             } catch (error) {
-                console.error('Error initializing user data:', error);
+                console.error('Error fetching profile data:', error);
             } finally {
                 setLoading(false);
             }
         };
 
-        initializeUser();
-    }, [email]);
-
-    const handleUpdateProfile = () => {
-        if (userId) {
-            const reputationUrl = `https://allow.cubid.me/pii?uid=${userId}&redirect_ui=${encodeURIComponent(
-                window.location.origin
-            )}`;
-            router.push(reputationUrl);
-        }
-    };
+        fetchProfileData();
+    }, [userId]);
 
     if (loading) {
-        return <div>Loading user data...</div>;
+        return <div>Loading user profile...</div>;
+    }
+
+    if (!userData || !userScore) {
+        return <div>User not found</div>;
     }
 
     return (
-        <Card className="w-[600px]">
+        <Card className="w-[600px] mx-auto mt-8">
             <CardHeader>
                 <CardTitle className="text-2xl font-bold">
-                    User Dashboard
+                    User Profile
                 </CardTitle>
                 <CardDescription>
-                    Your Sacred profile and trust score
+                    Sacred profile and trust score for {userData.name}
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -102,15 +89,14 @@ export const UserDashboard = ({ email }: { email: string }) => {
                         <h3 className="text-lg font-semibold">
                             Personal Information
                         </h3>
-                        <p>Name: {userData?.name}</p>
-                        <p>Country: {userData?.country}</p>
-                        <p>Address: {userData?.address}</p>
-                        <p>Is Human: {userData?.is_human}</p>
+                        <p>Name: {userData.name}</p>
+                        <p>Country: {userData.country}</p>
+                        <p>Is Human: {userData.is_human}</p>
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold">Trust Score</h3>
-                        <p>Cubid Score: {userScore?.cubid_score}</p>
-                        <p>Scoring Schema: {userScore?.scoring_schema}</p>
+                        <p>Cubid Score: {userScore.cubid_score}</p>
+                        <p>Scoring Schema: {userScore.scoring_schema}</p>
                     </div>
                     <div>
                         <h3 className="text-lg font-semibold">
@@ -128,14 +114,8 @@ export const UserDashboard = ({ email }: { email: string }) => {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter className="flex justify-between">
-                <Button variant="outline" onClick={handleUpdateProfile}>
-                    Update Profile
-                </Button>
-                <Link href={`/profile/${userId}`}>
-                    <Button variant="secondary">View Public Profile</Button>
-                </Link>
-            </CardFooter>
         </Card>
     );
 };
+
+export default UserProfile;
