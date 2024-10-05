@@ -15,7 +15,7 @@ export default function Home() {
             <Card className="w-[350px]">
                 <CardHeader>
                     <CardTitle className="text-4xl font-bold text-center">
-                        Trust Me Bro
+                        Login to Sacred
                     </CardTitle>
                     <CardDescription className="text-center">
                         Your trusted reputation system

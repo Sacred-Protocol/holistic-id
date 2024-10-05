@@ -5,7 +5,7 @@ import { AuthProvider } from '@/components/auth/AuthProvider';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata = {
-    title: 'Trust Me Bro',
+    title: 'Login',
     description: 'Your trusted reputation system',
 };
 
