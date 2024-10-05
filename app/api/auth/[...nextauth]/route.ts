@@ -12,4 +12,3 @@ const handler = NextAuth({
 });
 
 export { handler as GET, handler as POST };
-//TODO: redirect from vercel then cubeid on tg
