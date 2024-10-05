@@ -8,6 +8,8 @@ import { useRouter } from 'next/navigation';
 const AuthButton = () => {
     const { data: session, status } = useSession();
     const [isLoading, setIsLoading] = useState(false);
+    const [showBuildReputation, setShowBuildReputation] = useState(false);
+    const [reputationUrl, setReputationUrl] = useState('');
     const router = useRouter();
 
     useEffect(() => {
@@ -21,12 +23,12 @@ const AuthButton = () => {
             const user = await createUser(email);
             const identity = await fetchIdentity(user.user_id);
 
-            if (identity?.stamp_details?.length <= 3) {
-                const redirectUrl = `https://allow.cubid.me/pii?uid=${
-                    user.user_id
-                }&redirect_ui=${encodeURIComponent(window.location.origin)}`;
-                router.push(redirectUrl);
-            }
+            const reputation = `https://allow.cubid.me/pii?uid=${
+                user.user_id
+            }&redirect_ui=${encodeURIComponent(window.location.origin)}`;
+
+            setShowBuildReputation(true);
+            setReputationUrl(reputation);
         } catch (error) {
             console.error('Error during authentication process:', error);
         }
@@ -44,15 +46,26 @@ const AuthButton = () => {
         }
     };
 
+    const handleBuildReputation = () => {
+        router.push(reputationUrl);
+    };
+
     if (status === 'loading' || isLoading) {
         return <Button disabled>Loading...</Button>;
     }
 
     if (session) {
         return (
-            <Button variant="outline" onClick={() => signOut()}>
-                Sign out
-            </Button>
+            <div className="flex gap-2">
+                <Button variant="outline" onClick={() => signOut()}>
+                    Sign out
+                </Button>
+                {showBuildReputation && (
+                    <Button onClick={handleBuildReputation}>
+                        Build Reputation
+                    </Button>
+                )}
+            </div>
         );
     }
 
