@@ -52,7 +52,7 @@ export const fetchIdentity = async (
                 user_id: uuid,
             }
         );
-        console.log({ response });
+        console.log('identity', { response });
         return response.data;
     } catch (error) {
         console.error('Error fetching identity:', error);
@@ -89,6 +89,7 @@ export const fetchUserData = async (userId: string): Promise<UserData> => {
                 user_id: userId,
             }
         );
+        console.log('user data', { response });
         return response.data;
     } catch (error) {
         console.error('Error fetching user data:', error);
@@ -105,6 +106,7 @@ export const fetchUserScore = async (userId: string): Promise<UserScore> => {
                 user_id: userId,
             }
         );
+        console.log('score', { response });
         return response.data;
     } catch (error) {
         console.error('Error fetching user score:', error);
