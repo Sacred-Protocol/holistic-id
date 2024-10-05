@@ -13,8 +13,8 @@ const AuthButton = () => {
         );
     }
     return (
-        <Button onClick={() => signIn('google')}>
-            Authenticate with Google
+        <Button onClick={() => signIn('twitter')}>
+            Authenticate with Twitter
         </Button>
     );
 };
