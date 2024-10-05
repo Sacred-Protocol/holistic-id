@@ -14,6 +14,7 @@ import {
     CardContent,
     CardFooter,
 } from './ui/card';
+import { useRouter } from 'next/navigation';
 
 interface UserData {
     name: string;
@@ -40,18 +41,17 @@ interface StampDetail {
 }
 
 export const UserDashboard = ({ email }: { email: string }) => {
-    console.log('email', email);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [userScore, setUserScore] = useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = useState<StampDetail[]>([]);
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
+    const router = useRouter();
 
     useEffect(() => {
         const initializeUser = async () => {
             try {
                 const userResponse = await createUser(email);
-                console.log(userResponse);
                 setUserId(userResponse.user_id);
 
                 const [userData, userScore, identity] = await Promise.all([
@@ -62,7 +62,6 @@ export const UserDashboard = ({ email }: { email: string }) => {
                 setUserData(userData);
                 setUserScore(userScore);
                 setStampDetails(identity.stamp_details);
-                console.log({ userData, userScore, identity, userResponse });
             } catch (error) {
                 console.error('Error initializing user data:', error);
             } finally {
@@ -72,6 +71,15 @@ export const UserDashboard = ({ email }: { email: string }) => {
 
         initializeUser();
     }, [email]);
+
+    const handleUpdateProfile = () => {
+        if (userId) {
+            const reputationUrl = `https://allow.cubid.me/pii?uid=${userId}&redirect_ui=${encodeURIComponent(
+                window.location.origin
+            )}`;
+            router.push(reputationUrl);
+        }
+    };
 
     if (loading) {
         return <div>Loading user data...</div>;
@@ -120,7 +128,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
                 </div>
             </CardContent>
             <CardFooter>
-                <Button variant="outline" onClick={() => {}}>
+                <Button variant="outline" onClick={handleUpdateProfile}>
                     Update Profile
                 </Button>
             </CardFooter>
