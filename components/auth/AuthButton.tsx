@@ -1,11 +1,17 @@
-'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { createUser, fetchIdentity } from '@/app/services/cubid';
 import { useRouter } from 'next/navigation';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from '@/components/ui/tooltip';
+import { LogIn, LogOut, UserPlus, Loader2 } from 'lucide-react';
 
-const AuthButton = () => {
+const AuthButton: React.FC = () => {
     const { data: session, status, update } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [showBuildReputation, setShowBuildReputation] = useState(false);
@@ -19,11 +25,11 @@ const AuthButton = () => {
     }, [status, session]);
 
     const handleAuthentication = async (email: string) => {
+        setIsLoading(true);
         try {
             const user = await createUser(email);
-            const identity = await fetchIdentity(user.user_id);
+            await fetchIdentity(user.user_id);
 
-            // Update the session with the user_id
             await update({
                 ...session,
                 user: {
@@ -40,11 +46,12 @@ const AuthButton = () => {
             setReputationUrl(reputation);
         } catch (error) {
             console.error('Error during authentication process:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleSignIn = async () => {
-        console.log('Signing in with Google...');
         setIsLoading(true);
         try {
             await signIn('google', { redirect: false });
@@ -60,25 +67,71 @@ const AuthButton = () => {
     };
 
     if (status === 'loading' || isLoading) {
-        return <Button disabled>Loading...</Button>;
+        return (
+            <Button disabled className="w-40">
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Please wait
+            </Button>
+        );
     }
 
     if (session) {
         return (
             <div className="flex gap-2">
-                <Button variant="outline" onClick={() => signOut()}>
-                    Sign out
-                </Button>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <Button
+                                variant="outline"
+                                onClick={() => signOut()}
+                                className="w-40"
+                            >
+                                <LogOut className="mr-2 h-4 w-4" />
+                                Sign out
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>
+                            <p>Sign out of your account</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
                 {showBuildReputation && (
-                    <Button onClick={handleBuildReputation}>
-                        Build Reputation
-                    </Button>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={handleBuildReputation}
+                                    className="w-40"
+                                >
+                                    <UserPlus className="mr-2 h-4 w-4" />
+                                    Build Profile
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Enhance your Holistic ID</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 )}
             </div>
         );
     }
 
-    return <Button onClick={handleSignIn}>Authenticate with Google</Button>;
+    return (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <Button onClick={handleSignIn} className="w-48">
+                        <LogIn className="mr-2 h-4 w-4" />
+                        Sign in with Google
+                    </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                    <p>Authenticate and create your Holistic ID</p>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
 };
 
 export default AuthButton;
