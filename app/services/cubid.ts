@@ -111,21 +111,3 @@ export const fetchUserScore = async (userId: string): Promise<UserScore> => {
         throw error;
     }
 };
-
-export const fetchUserIdentity = async (
-    userId: string
-): Promise<FetchIdentityResponse> => {
-    try {
-        const response = await axios.post<FetchIdentityResponse>(
-            `${API_BASE_URL}/v2/identity/fetch_identity`,
-            {
-                apikey: process.env.NEXT_PUBLIC_CUBID_API_KEY,
-                user_id: userId,
-            }
-        );
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching user identity:', error);
-        throw error;
-    }
-};
