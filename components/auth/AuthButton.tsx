@@ -6,7 +6,7 @@ import { createUser, fetchIdentity } from '@/app/services/cubid';
 import { useRouter } from 'next/navigation';
 
 const AuthButton = () => {
-    const { data: session, status } = useSession();
+    const { data: session, status, update } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [showBuildReputation, setShowBuildReputation] = useState(false);
     const [reputationUrl, setReputationUrl] = useState('');
@@ -22,6 +22,15 @@ const AuthButton = () => {
         try {
             const user = await createUser(email);
             const identity = await fetchIdentity(user.user_id);
+
+            // Update the session with the user_id
+            await update({
+                ...session,
+                user: {
+                    ...session?.user,
+                    id: user.user_id,
+                },
+            });
 
             const reputation = `https://allow.cubid.me/pii?uid=${
                 user.user_id
