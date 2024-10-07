@@ -13,6 +13,8 @@ import { LogIn, LogOut, UserPlus, Loader2, Twitter, Mail } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 const AuthButton: React.FC = () => {
+    const [localData, setLocalData] = useState<any>(null);
+
     const { data: session, status, update } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [authStep, setAuthStep] = useState<
@@ -20,22 +22,50 @@ const AuthButton: React.FC = () => {
     >('initial');
     const [progress, setProgress] = useState(0);
     const router = useRouter();
-    useEffect(() => {
-        console.log({ status, session });
-        if (status === 'authenticated') {
-            const hasTwitter =
-                session?.twitterUser?.name && session?.twitterUser?.image;
-            const hasGoogle =
-                session?.googleUser?.name && session?.googleUser?.email;
+    const providerData = session?.providers || localData;
 
+    useEffect(() => {
+        if (status === 'authenticated' && session?.providers) {
+            // Store provider data in localStorage
+            localStorage.setItem(
+                'providerData',
+                JSON.stringify(session.providers)
+            );
+        }
+    }, [session, status]);
+
+    useEffect(() => {
+        // Retrieve data from localStorage if session is not available
+        if (status !== 'loading' && !session) {
+            const storedData = localStorage.getItem('providerData');
+            if (storedData) {
+                setLocalData(JSON.parse(storedData));
+            }
+        }
+    }, [session, status]);
+    useEffect(() => {
+        if (status === 'authenticated') {
+            const hasTwitter = session?.providers?.twitter?.name;
+            const hasGoogle = session?.providers?.google?.email;
+            console.log({ hasTwitter, hasGoogle });
             if (hasTwitter && hasGoogle) {
-                handleAuthentication(session.googleUser.email as string);
+                handleAuthentication(
+                    session?.providers?.google?.email as string
+                );
                 setAuthStep('complete');
                 setProgress(100);
-            } else if (hasTwitter) {
+            } else if (
+                session?.providers?.twitter?.name &&
+                !session?.providers?.google?.email
+            ) {
+                console.log('step is google');
                 setAuthStep('google');
                 setProgress(50);
-            } else if (hasGoogle) {
+            } else if (
+                !session?.providers?.twitter?.name &&
+                session?.providers?.google?.email
+            ) {
+                console.log('step is twitter');
                 setAuthStep('twitter');
                 setProgress(50);
             }
@@ -84,15 +114,6 @@ const AuthButton: React.FC = () => {
         );
     }
 
-    if (authStep === 'complete') {
-        return (
-            <Button onClick={() => router.push('/dashboard')} className="w-64">
-                <UserPlus className="mr-2 h-4 w-4" />
-                View Your Holistic ID
-            </Button>
-        );
-    }
-
     return (
         <div className="space-y-4 w-64">
             <div className="text-center mb-2">
@@ -110,17 +131,17 @@ const AuthButton: React.FC = () => {
                         <Button
                             onClick={() => handleSignIn('twitter')}
                             className="w-full"
-                            disabled={authStep === 'twitter'}
+                            disabled={session?.providers?.twitter?.name}
                         >
                             <Twitter className="mr-2 h-4 w-4" />
-                            {authStep === 'twitter'
+                            {session?.providers?.twitter?.name
                                 ? 'Twitter Connected'
                                 : 'Connect Twitter'}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>
-                            {authStep === 'twitter'
+                            {session?.providers?.twitter?.name
                                 ? 'Twitter account connected'
                                 : 'Connect your Twitter account'}
                         </p>
@@ -133,17 +154,17 @@ const AuthButton: React.FC = () => {
                         <Button
                             onClick={() => handleSignIn('google')}
                             className="w-full"
-                            disabled={authStep === 'google'}
+                            disabled={session?.providers?.google?.email}
                         >
                             <Mail className="mr-2 h-4 w-4" />
-                            {authStep === 'google'
+                            {session?.providers?.google?.email
                                 ? 'Google Connected'
                                 : 'Connect Google'}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>
-                            {authStep === 'google'
+                            {session?.providers?.google?.email
                                 ? 'Google account connected'
                                 : 'Connect your Google account'}
                         </p>
@@ -153,7 +174,7 @@ const AuthButton: React.FC = () => {
             {(authStep === 'twitter' || authStep === 'google') && (
                 <p className="text-sm text-center text-gray-600">
                     Great start! Now connect your{' '}
-                    {authStep === 'twitter' ? 'Google' : 'Twitter'} account to
+                    {authStep === 'twitter' ? 'Twitter' : 'Google'} account to
                     complete your Holistic ID.
                 </p>
             )}

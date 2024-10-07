@@ -21,8 +21,10 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            {status === 'authenticated' && session?.user?.email ? (
-                <UserDashboard email={session.user.email} />
+            {status === 'authenticated' &&
+            session?.providers?.twitter?.name &&
+            session?.providers?.google?.email ? (
+                <UserDashboard email={session?.providers?.google?.emaill} />
             ) : (
                 <Card className="w-[350px]">
                     <CardHeader>

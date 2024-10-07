@@ -1,8 +1,8 @@
-import NextAuth from 'next-auth';
+import NextAuth, { NextAuthOptions } from 'next-auth';
 import TwitterProvider from 'next-auth/providers/twitter';
 import GoogleProvider from 'next-auth/providers/google';
 
-const handler = NextAuth({
+const authOptions: NextAuthOptions = {
     providers: [
         GoogleProvider({
             clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -23,16 +23,14 @@ const handler = NextAuth({
     callbacks: {
         async jwt({ token, account, profile }) {
             if (account) {
-                token.accessToken = account.access_token;
-                token.provider = account.provider;
                 if (account.provider === 'google') {
-                    token.googleUser = {
+                    token.googleProfile = {
                         email: profile?.email,
                         name: profile?.name,
                         image: profile?.picture,
                     };
-                } else if (account.provider === 'twitter') {
-                    token.twitterUser = {
+                } else {
+                    token.twitterProfile = {
                         name: profile?.name,
                         image: profile?.image,
                     };
@@ -41,11 +39,34 @@ const handler = NextAuth({
             return token;
         },
         async session({ session, token }) {
-            session.googleUser = token.googleUser as any;
-            return session;
+            const updatedSession = { ...session };
+            if (!updatedSession.providers) {
+                updatedSession.providers = {};
+            }
+            if (!updatedSession.providers.google) {
+                updatedSession.providers.google = {};
+            }
+            if (!updatedSession.providers.twitter) {
+                updatedSession.providers.twitter = {};
+            }
+
+            if (token.googleProfile) {
+                updatedSession.providers.google = token.googleProfile;
+            }
+
+            if (
+                session?.user?.image &&
+                !session?.providers?.twitter &&
+                !session?.user?.email
+            ) {
+                updatedSession.providers.twitter = session.user;
+            }
+
+            return updatedSession;
         },
     },
     secret: process.env.NEXTAUTH_SECRET,
-});
+};
 
+const handler = NextAuth(authOptions);
 export { handler as GET, handler as POST };
