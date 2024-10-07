@@ -11,7 +11,7 @@ import AuthButton from '@/components/auth/AuthButton';
 
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { UserDashboard } from '@/components/Dasbhoard';
+import { UserDashboard } from '@/components/Dashboard';
 
 interface CustomSession extends Session {
     user: {
