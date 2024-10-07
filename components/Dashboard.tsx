@@ -24,7 +24,8 @@ import {
 import { Badge } from './ui/badge';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, ChevronRight, AlertCircle, Check } from 'lucide-react';
+import { Shield, ChevronRight, AlertCircle, Check, LogOut } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 interface UserData {
     name: string;
@@ -82,6 +83,11 @@ export const UserDashboard = ({ email }: { email: string }) => {
         initializeUser();
     }, [email]);
 
+    const handleLogout = async () => {
+        await signOut({ redirect: false });
+        router.push('/'); // Redirect to home page after logout
+    };
+
     const handleUpdateProfile = () => {
         if (userId) {
             const reputationUrl = `https://allow.cubid.me/pii?uid=${userId}&redirect_ui=${encodeURIComponent(
@@ -109,12 +115,33 @@ export const UserDashboard = ({ email }: { email: string }) => {
     return (
         <Card className="w-full max-w-3xl mx-auto">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-                <CardTitle className="text-3xl font-bold flex items-center gap-2">
-                    <Shield size={32} /> Your Holistic ID
-                </CardTitle>
-                <CardDescription className="text-gray-100">
-                    Your unified digital identity and trust score
-                </CardDescription>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <CardTitle className="text-3xl font-bold flex items-center gap-2">
+                            <Shield size={32} /> Your Holistic ID
+                        </CardTitle>
+                        <CardDescription className="text-gray-100">
+                            Your unified digital identity and trust score
+                        </CardDescription>
+                    </div>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={handleLogout}
+                                    className="text-white hover:bg-white/20"
+                                >
+                                    <LogOut size={24} />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Log out</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
                 <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
