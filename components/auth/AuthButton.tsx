@@ -54,7 +54,7 @@ const AuthButton: React.FC = () => {
     const handleSignIn = async () => {
         setIsLoading(true);
         try {
-            await signIn('google', { redirect: false });
+            await signIn('twitter', { redirect: false });
         } catch (error) {
             console.error('Error during sign in:', error);
         } finally {
@@ -123,7 +123,7 @@ const AuthButton: React.FC = () => {
                 <TooltipTrigger asChild>
                     <Button onClick={handleSignIn} className="w-48">
                         <LogIn className="mr-2 h-4 w-4" />
-                        Sign in with Google
+                        Sign in with Twitter
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent>
