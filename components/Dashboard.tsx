@@ -25,7 +25,7 @@ import { Badge } from './ui/badge';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Shield, ChevronRight, AlertCircle, Check, LogOut } from 'lucide-react';
-import { signOut } from 'next-auth/react';
+import { signOut, useSession } from 'next-auth/react';
 
 interface UserData {
     name: string;
@@ -58,7 +58,11 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const [loading, setLoading] = useState(true);
     const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
+    const { data: session, status, update } = useSession();
 
+    useEffect(() => {
+        console.log('session', session);
+    }, [session]);
     useEffect(() => {
         const initializeUser = async () => {
             try {

@@ -13,17 +13,9 @@ import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { UserDashboard } from '@/components/Dashboard';
 
-interface CustomSession extends Session {
-    user: {
-        name?: string | null;
-        email?: string | null;
-        image?: string | null;
-    };
-}
-
 export default function Home() {
     const { data: session, status } = useSession() as {
-        data: CustomSession | null;
+        data: Session | null;
         status: string;
     };
 
