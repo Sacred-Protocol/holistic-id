@@ -4,6 +4,8 @@ import {
     fetchUserData,
     fetchUserScore,
     fetchIdentity,
+    getStampIcon,
+    truncateValue,
 } from '@/app/services/cubid';
 import { Button } from '@/components/ui/button';
 import {
@@ -202,37 +204,74 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                 <Tooltip>
                                     <TooltipTrigger asChild>
                                         <div
-                                            className={`p-3 rounded-lg flex items-center gap-2 ${
+                                            className={`p-4 rounded-lg flex flex-col ${
                                                 stamp.status === 'Verified'
-                                                    ? 'bg-green-100'
-                                                    : 'bg-gray-100'
+                                                    ? 'bg-green-50 border border-green-200'
+                                                    : 'bg-gray-50 border border-gray-200'
                                             }`}
                                         >
-                                            {stamp.status === 'Verified' ? (
-                                                <Check className="text-green-600" />
-                                            ) : (
-                                                <AlertCircle className="text-yellow-600" />
-                                            )}
-                                            <span className="font-medium">
-                                                {stamp.stamp_type}
-                                            </span>
-                                            <Badge
-                                                variant={
-                                                    stamp.status === 'Verified'
-                                                        ? 'default'
-                                                        : 'secondary'
-                                                }
+                                            <div className="flex items-center justify-between mb-2">
+                                                <div className="flex items-center gap-2">
+                                                    <span
+                                                        className="text-2xl"
+                                                        role="img"
+                                                        aria-label={
+                                                            stamp.stamp_type
+                                                        }
+                                                    >
+                                                        {getStampIcon(
+                                                            stamp.stamp_type
+                                                        )}
+                                                    </span>
+                                                    <span className="font-medium capitalize">
+                                                        {stamp.stamp_type}
+                                                    </span>
+                                                </div>
+                                                <Badge
+                                                    variant={
+                                                        stamp.status ===
+                                                        'Verified'
+                                                            ? 'default'
+                                                            : 'secondary'
+                                                    }
+                                                    className={
+                                                        stamp.status ===
+                                                        'Verified'
+                                                            ? 'bg-green-500'
+                                                            : ''
+                                                    }
+                                                >
+                                                    {stamp.status ===
+                                                    'Verified' ? (
+                                                        <Check className="w-3 h-3 mr-1" />
+                                                    ) : (
+                                                        <AlertCircle className="w-3 h-3 mr-1" />
+                                                    )}
+                                                    {stamp.status}
+                                                </Badge>
+                                            </div>
+                                            <p
+                                                className="text-sm text-gray-600 truncate"
+                                                title={stamp.value}
                                             >
-                                                {stamp.status}
-                                            </Badge>
+                                                {truncateValue(stamp.value)}
+                                            </p>
                                         </div>
                                     </TooltipTrigger>
-                                    <TooltipContent>
-                                        <p>
-                                            {stamp.status === 'Verified'
-                                                ? `Verified`
-                                                : ''}
+                                    <TooltipContent
+                                        side="bottom"
+                                        className="max-w-xs"
+                                    >
+                                        <p className="font-medium">
+                                            {stamp.stamp_type} Verification
                                         </p>
+                                        <p className="text-sm">{stamp.value}</p>
+                                        {stamp.status === 'Verified' && (
+                                            <p className="text-xs text-green-600 mt-1">
+                                                ✓ Verified on{' '}
+                                                {new Date().toLocaleDateString()}
+                                            </p>
+                                        )}
                                     </TooltipContent>
                                 </Tooltip>
                             </TooltipProvider>

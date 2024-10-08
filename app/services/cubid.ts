@@ -2,6 +2,36 @@ import axios from 'axios';
 
 const API_BASE_URL = 'https://passport.cubid.me/api';
 
+export const getStampIcon = (stampType: string) => {
+    switch (stampType.toLowerCase()) {
+        case 'gitcoin':
+            return '🦄';
+        case 'evm':
+            return '🔗';
+        case 'github':
+            return '🐙';
+        case 'twitter':
+            return '🐦';
+        case 'telegram':
+            return '✈️';
+        case 'google':
+            return '🔍';
+        default:
+            return '🔐';
+    }
+};
+
+export const truncateValue = (value: string) => {
+    if (value.startsWith('0x')) {
+        return `${value.slice(0, 6)}...${value.slice(-4)}`;
+    }
+    if (value.includes('@')) {
+        const [username, domain] = value.split('@');
+        return `${username.slice(0, 3)}...@${domain}`;
+    }
+    return value.length > 10 ? `${value.slice(0, 7)}...` : value;
+};
+
 interface StampDetail {
     stamp_type: string;
     value: string;
