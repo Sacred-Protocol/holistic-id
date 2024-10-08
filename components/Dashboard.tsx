@@ -26,6 +26,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Shield, ChevronRight, AlertCircle, Check, LogOut } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
+import TwitterProfile from './TwitterProfile';
 
 interface UserData {
     name: string;
@@ -52,7 +53,6 @@ interface StampDetail {
 }
 
 export const UserDashboard = ({ email }: { email: string }) => {
-    console.log('dashboard', email);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [userScore, setUserScore] = useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = useState<StampDetail[]>([]);
@@ -61,9 +61,40 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const router = useRouter();
     const { data: session, status, update } = useSession();
 
+    const [followers_count, setFollowersCount] = useState(0);
+    const [following_count, setFollowingCount] = useState(0);
+    const [image, setImage] = useState('');
+    const [name, setName] = useState('');
+    const [profile_image_url, setProfileImage] = useState('');
+    const [tweet_count, setTweetCount] = useState(0);
+    const [username, setUserName] = useState('');
+
     useEffect(() => {
-        console.log('session', session);
-    }, [session]);
+        const twitterData = JSON.parse(
+            localStorage.getItem('twitterProviderData') || '{}'
+        );
+
+        if (twitterData) {
+            const {
+                followers_count,
+                following_count,
+                image,
+                name,
+                profile_image_url,
+                tweet_count,
+                username,
+            } = twitterData;
+
+            setFollowersCount(followers_count);
+            setFollowingCount(following_count);
+            setImage(image);
+            setName(name);
+            setProfileImage(profile_image_url);
+            setTweetCount(tweet_count);
+            setUserName(username);
+        }
+    }, []);
+
     useEffect(() => {
         const initializeUser = async () => {
             try {
@@ -91,6 +122,8 @@ export const UserDashboard = ({ email }: { email: string }) => {
 
     const handleLogout = async () => {
         await signOut({ redirect: false });
+        localStorage.removeItem('twitterProviderData');
+        localStorage.removeItem('googleProviderData');
         router.push('/'); // Redirect to home page after logout
     };
 
@@ -149,6 +182,17 @@ export const UserDashboard = ({ email }: { email: string }) => {
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+                </div>
+                <div className="mt-4">
+                    <TwitterProfile
+                        followers_count={followers_count}
+                        following_count={following_count}
+                        image={image}
+                        name={name}
+                        profile_image_url={profile_image_url}
+                        tweet_count={tweet_count}
+                        username={username}
+                    />
                 </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">

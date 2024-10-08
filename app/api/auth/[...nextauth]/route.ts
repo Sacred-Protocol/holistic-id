@@ -1,6 +1,7 @@
 import NextAuth, { NextAuthOptions } from 'next-auth';
 import TwitterProvider from 'next-auth/providers/twitter';
 import GoogleProvider from 'next-auth/providers/google';
+import { fetchTwitterUserData } from '@/app/services/twitter';
 
 const authOptions: NextAuthOptions = {
     providers: [
@@ -33,6 +34,8 @@ const authOptions: NextAuthOptions = {
                     token.twitterProfile = {
                         name: profile?.name,
                         image: profile?.image,
+                        accessToken: account.access_token,
+                        refreshToken: account.refresh_token,
                     };
                 }
             }
@@ -60,6 +63,22 @@ const authOptions: NextAuthOptions = {
                 !session?.user?.email
             ) {
                 updatedSession.providers.twitter = session.user;
+
+                try {
+                    //@ts-ignore
+                    const accessToken = token?.twitterProfile.accessToken;
+                    if (accessToken) {
+                        const userData = await fetchTwitterUserData(
+                            accessToken
+                        );
+                        updatedSession.providers.twitter = {
+                            ...session.user,
+                            ...userData,
+                        };
+                    }
+                } catch (e) {
+                    console.log(e);
+                }
             }
 
             return updatedSession;

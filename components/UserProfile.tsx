@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
     fetchUserData,
     fetchUserScore,
@@ -32,6 +32,7 @@ import {
     Globe,
     User,
 } from 'lucide-react';
+import TwitterProfile from './TwitterProfile';
 
 interface UserData {
     name: string;
@@ -62,6 +63,40 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     const [userScore, setUserScore] = React.useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = React.useState<StampDetail[]>([]);
     const [loading, setLoading] = React.useState(true);
+
+    const [followers_count, setFollowersCount] = useState(0);
+    const [following_count, setFollowingCount] = useState(0);
+    const [image, setImage] = useState('');
+    const [name, setName] = useState('');
+    const [profile_image_url, setProfileImage] = useState('');
+    const [tweet_count, setTweetCount] = useState(0);
+    const [username, setUserName] = useState('');
+
+    useEffect(() => {
+        const twitterData = JSON.parse(
+            localStorage.getItem('twitterProviderData') || '{}'
+        );
+
+        if (twitterData) {
+            const {
+                followers_count,
+                following_count,
+                image,
+                name,
+                profile_image_url,
+                tweet_count,
+                username,
+            } = twitterData;
+
+            setFollowersCount(followers_count);
+            setFollowingCount(following_count);
+            setImage(image);
+            setName(name);
+            setProfileImage(profile_image_url);
+            setTweetCount(tweet_count);
+            setUserName(username);
+        }
+    }, []);
 
     React.useEffect(() => {
         const fetchProfileData = async () => {
@@ -116,6 +151,17 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                 <CardDescription className="text-gray-100">
                     Public profile and trust score
                 </CardDescription>
+                <div className="mt-4">
+                    <TwitterProfile
+                        followers_count={followers_count}
+                        following_count={following_count}
+                        image={image}
+                        name={name}
+                        profile_image_url={profile_image_url}
+                        tweet_count={tweet_count}
+                        username={username}
+                    />
+                </div>
             </CardHeader>
             <CardContent className="p-6 space-y-6">
                 <div className="bg-gray-50 p-4 rounded-lg shadow-inner">
