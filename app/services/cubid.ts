@@ -48,7 +48,7 @@ export const fetchIdentity = async (
         const response = await axios.post<FetchIdentityResponse>(
             `${API_BASE_URL}/v2/identity/fetch_identity`,
             {
-                apikey: process.env.CUBID_API_KEY,
+                apikey: process.env.NEXT_PUBLIC_CUBID_API_KEY,
                 user_id: uuid,
             }
         );
