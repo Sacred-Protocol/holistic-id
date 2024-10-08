@@ -142,9 +142,9 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     }
 
     const getTrustLevel = (score: number) => {
-        if (score >= 80) return 'Excellent';
-        if (score >= 60) return 'Good';
-        if (score >= 40) return 'Fair';
+        if (score >= 40) return 'Excellent';
+        if (score >= 20) return 'Good';
+        if (score >= 5) return 'Fair';
         return 'Needs Improvement';
     };
 
@@ -175,12 +175,13 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                     <h3 className="text-xl font-semibold mb-2">Trust Score</h3>
                     <div className="flex items-center gap-4">
                         <div className="text-4xl font-bold text-blue-600">
-                            {userScore.cubid_score}
+                            {userScore.cubid_score.toLocaleString('en-US')}
                         </div>
                         <div className="flex-grow">
                             <Progress
-                                value={userScore.cubid_score}
+                                value={(userScore?.cubid_score || 0) * 2}
                                 className="h-3"
+                                max={50}
                             />
                         </div>
                         <div className="text-lg font-medium">
