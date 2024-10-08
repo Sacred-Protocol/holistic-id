@@ -33,6 +33,9 @@ import {
     MapPin,
     Globe,
     User,
+    Eye,
+    EyeOff,
+    Lock,
 } from 'lucide-react';
 import TwitterProfile from './TwitterProfile';
 
@@ -58,7 +61,10 @@ interface StampDetail {
     status: 'Verified' | 'Unverified';
 }
 
-const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
+const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
+    userId,
+    view,
+}) => {
     const [userData, setUserData] = React.useState<UserData | null>(null);
     const [userScore, setUserScore] = React.useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = React.useState<StampDetail[]>([]);
@@ -74,6 +80,8 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     const [username, setUserName] = useState('');
     const [pseudonym, setPseudonym] = useState('');
     const [hasPseudonym, setHasPseudonym] = useState(false);
+
+    const isPublicView = view === 'public';
 
     useEffect(() => {
         const twitterData = JSON.parse(
@@ -161,11 +169,15 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
                 <div className="mb-4">
                     <CardTitle className="text-3xl font-bold flex items-center gap-2 mb-2">
-                        <Shield size={32} /> {userData.name || googleName}'s
-                        Holistic ID
+                        <Shield size={32} />
+                        {isPublicView
+                            ? `${userData.name || googleName}'s Holistic ID`
+                            : 'Your Private Holistic ID'}
                     </CardTitle>
                     <CardDescription className="text-gray-100">
-                        Public profile and trust score
+                        {isPublicView
+                            ? 'Public profile and trust score'
+                            : 'Private view of your Holistic ID'}
                     </CardDescription>
                 </div>
                 {hasPseudonym && (
@@ -208,7 +220,10 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                         </div>
                     </div>
                     <p className="text-sm text-gray-600 mt-2">
-                        This score reflects {userData?.name || googleName}'s
+                        This score reflects{' '}
+                        {isPublicView
+                            ? `${userData?.name || googleName}'s`
+                            : 'your'}{' '}
                         overall digital reputation.
                     </p>
                 </div>
@@ -269,12 +284,22 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                                     {stamp.status}
                                                 </Badge>
                                             </div>
-                                            <p
-                                                className="text-sm text-gray-600 truncate"
-                                                title={stamp.value}
-                                            >
-                                                {truncateValue(stamp.value)}
-                                            </p>
+                                            {isPublicView ? (
+                                                <p
+                                                    className="text-sm text-gray-600 truncate"
+                                                    title={stamp.value}
+                                                >
+                                                    {truncateValue(stamp.value)}
+                                                </p>
+                                            ) : (
+                                                <p className="text-sm text-gray-600 italic">
+                                                    <Lock
+                                                        size={12}
+                                                        className="inline mr-1"
+                                                    />
+                                                    Value hidden in private view
+                                                </p>
+                                            )}
                                         </div>
                                     </TooltipTrigger>
                                     <TooltipContent
@@ -284,7 +309,15 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                         <p className="font-medium">
                                             {stamp.stamp_type} Verification
                                         </p>
-                                        <p className="text-sm">{stamp.value}</p>
+                                        {isPublicView ? (
+                                            <p className="text-sm">
+                                                {stamp.value}
+                                            </p>
+                                        ) : (
+                                            <p className="text-sm italic">
+                                                Value hidden in private view
+                                            </p>
+                                        )}
                                         {stamp.status === 'Verified' && (
                                             <p className="text-xs text-green-600 mt-1">
                                                 ✓ Verified on{' '}
@@ -298,44 +331,51 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                     </div>
                 </div>
 
-                <div>
-                    <h3 className="text-xl font-semibold mb-3">
-                        Personal Information
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div className="flex items-center gap-2">
-                            <User className="text-gray-400" />
-                            <div>
-                                <p className="text-sm text-gray-600">Name</p>
-                                <p className="font-medium">
-                                    {' '}
-                                    {userData?.name || googleName}
-                                </p>
+                {isPublicView && (
+                    <div>
+                        <h3 className="text-xl font-semibold mb-3">
+                            Personal Information
+                        </h3>
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="flex items-center gap-2">
+                                <User className="text-gray-400" />
+                                <div>
+                                    <p className="text-sm text-gray-600">
+                                        Name
+                                    </p>
+                                    <p className="font-medium">
+                                        {userData?.name || googleName}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Globe className="text-gray-400" />
-                            <div>
-                                <p className="text-sm text-gray-600">Country</p>
-                                <p className="font-medium">
-                                    {userData.country}
-                                </p>
+                            <div className="flex items-center gap-2">
+                                <Globe className="text-gray-400" />
+                                <div>
+                                    <p className="text-sm text-gray-600">
+                                        Country
+                                    </p>
+                                    <p className="font-medium">
+                                        {userData.country}
+                                    </p>
+                                </div>
                             </div>
-                        </div>
-                        <div className="col-span-2 flex items-center gap-2">
-                            <MapPin className="text-gray-400" />
-                            <div>
-                                <p className="text-sm text-gray-600">
-                                    Location
-                                </p>
-                                <p className="font-medium">
-                                    Lat: {userData.coordinates.lat?.toFixed(2)},
-                                    Lon: {userData.coordinates.lng?.toFixed(2)}
-                                </p>
+                            <div className="col-span-2 flex items-center gap-2">
+                                <MapPin className="text-gray-400" />
+                                <div>
+                                    <p className="text-sm text-gray-600">
+                                        Location
+                                    </p>
+                                    <p className="font-medium">
+                                        Lat:{' '}
+                                        {userData.coordinates.lat?.toFixed(2)},
+                                        Lon:{' '}
+                                        {userData.coordinates.lng?.toFixed(2)}
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
             </CardContent>
             <CardFooter className="flex justify-between bg-gray-50 rounded-b-lg p-4">
                 <Link href="/">

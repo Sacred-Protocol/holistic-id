@@ -33,6 +33,8 @@ import {
     Check,
     LogOut,
     User,
+    Eye,
+    EyeOff,
 } from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import TwitterProfile from './TwitterProfile';
@@ -78,6 +80,12 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
+
+    const handleViewProfile = (type: 'public' | 'private') => {
+        if (userId) {
+            router.push(`/profile/${userId}?view=${type}`);
+        }
+    };
 
     useEffect(() => {
         const twitterData = JSON.parse(
@@ -362,14 +370,24 @@ export const UserDashboard = ({ email }: { email: string }) => {
                 <Button variant="outline" onClick={handleUpdateProfile}>
                     Enhance Your Profile
                 </Button>
-                <Link href={`/profile/${userId}`}>
+                <div className="space-x-2">
                     <Button
                         variant="secondary"
                         className="flex items-center gap-2"
+                        onClick={() => handleViewProfile('public')}
                     >
-                        View Public Profile <ChevronRight size={16} />
+                        <Eye size={16} /> View Public Profile
                     </Button>
-                </Link>
+                </div>
+                <div className="space-x-2">
+                    <Button
+                        variant="secondary"
+                        className="flex items-center gap-2 mt-2"
+                        onClick={() => handleViewProfile('private')}
+                    >
+                        <EyeOff size={16} /> View Private Profile
+                    </Button>
+                </div>
             </CardFooter>
         </Card>
     );
