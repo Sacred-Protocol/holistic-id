@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Twitter, Users, UserPlus, MessageSquare } from 'lucide-react';
+import { Twitter, Users, UserPlus, MessageSquare, Coins } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
     Tooltip,
@@ -8,6 +8,7 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { getBalance, getUserAddress } from '@/app/services/tipjoy';
+import { Button } from '@/components/ui/button';
 
 interface TwitterProfileProps {
     followers_count: number;
@@ -44,12 +45,17 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
         getUserAddress(username).then((address) => {
             if (address) {
                 setJoyAddress(address);
-                getBalance(address).then((balance) => {
-                    setJoyBalance(balance);
-                });
+                getBalance(address)
+                    .then((balance) => {
+                        setJoyBalance(balance);
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user balance:', error);
+                    });
             }
         });
     }, [username]);
+
     return (
         <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-md rounded-lg p-3 shadow-lg">
             <Avatar className="w-16 h-16 border-2 border-white">
@@ -107,6 +113,36 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
                         </Tooltip>
                     </TooltipProvider>
                 </div>
+                {joyBalance > -1 && (
+                    <div className="mt-2 text-sm text-gray-300">
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="link"
+                                        className="p-0 h-auto text-gray-300 hover:text-gray-100"
+                                        onClick={() =>
+                                            window.open(
+                                                'https://points.sacredprotocol.com',
+                                                '_blank'
+                                            )
+                                        }
+                                    >
+                                        <Coins className="w-4 h-4 mr-1 inline-block" />
+                                        <span>
+                                            {' '}
+                                            Your TipJOY Balance:{' '}
+                                            {formatNumber(joyBalance)} JOY
+                                        </span>
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent>
+                                    <p>View JOY points on Sacred Protocol</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+                )}
             </div>
         </div>
     );
