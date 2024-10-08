@@ -9,7 +9,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { LogIn, LogOut, UserPlus, Loader2, Twitter, Mail } from 'lucide-react';
+import { Loader2, Twitter, Mail } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 const AuthButton: React.FC = () => {
