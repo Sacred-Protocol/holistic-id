@@ -23,6 +23,8 @@ export default function Home() {
     const [hasTwitter, setHasTwitter] = useState(false);
     const [hasGoogle, setHasGoogle] = useState(false);
     const [email, setEmail] = useState('');
+    const [pseudonym, setPseudonym] = useState('');
+    const [hasPseudonym, setHasPseudonym] = useState(false);
 
     useEffect(() => {
         if (status === 'authenticated' && session?.providers) {
@@ -61,6 +63,12 @@ export default function Home() {
                 localStorage.getItem('twitterProviderData') || '{}'
             );
 
+            const storedPseudonym = localStorage.getItem('userPseudonym');
+            if (storedPseudonym) {
+                setPseudonym(storedPseudonym);
+                setHasPseudonym(true);
+            }
+
             if (!Object.keys(updatedTwitterData).length) {
                 setHasTwitter(false);
             } else {
@@ -79,7 +87,10 @@ export default function Home() {
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            {status === 'authenticated' && hasTwitter && hasGoogle ? (
+            {status === 'authenticated' &&
+            hasTwitter &&
+            hasGoogle &&
+            hasPseudonym ? (
                 <UserDashboard email={email} />
             ) : (
                 <Card className="w-[350px]">

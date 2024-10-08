@@ -26,7 +26,14 @@ import {
 import { Badge } from './ui/badge';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Shield, ChevronRight, AlertCircle, Check, LogOut } from 'lucide-react';
+import {
+    Shield,
+    ChevronRight,
+    AlertCircle,
+    Check,
+    LogOut,
+    User,
+} from 'lucide-react';
 import { signOut, useSession } from 'next-auth/react';
 import TwitterProfile from './TwitterProfile';
 
@@ -60,6 +67,8 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const [userId, setUserId] = useState<string | null>(null);
     const router = useRouter();
     const { data: session, status, update } = useSession();
+    const [pseudonym, setPseudonym] = useState('');
+    const [hasPseudonym, setHasPseudonym] = useState(false);
 
     const [followers_count, setFollowersCount] = useState(0);
     const [following_count, setFollowingCount] = useState(0);
@@ -78,6 +87,13 @@ export const UserDashboard = ({ email }: { email: string }) => {
         const googleData = JSON.parse(
             localStorage.getItem('googleProviderData') || '{}'
         );
+
+        const storedPseudonym = localStorage.getItem('userPseudonym');
+        if (storedPseudonym) {
+            setPseudonym(storedPseudonym);
+            setHasPseudonym(true);
+        }
+
         setGoogleName(googleData?.name);
 
         if (twitterData) {
@@ -162,14 +178,23 @@ export const UserDashboard = ({ email }: { email: string }) => {
     return (
         <Card className="w-full max-w-3xl mx-auto">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-                <div className="flex justify-between items-center">
+                <div className="flex justify-between items-start">
                     <div>
-                        <CardTitle className="text-3xl font-bold flex items-center gap-2">
+                        <CardTitle className="text-3xl font-bold flex items-center gap-2 mb-2">
                             <Shield size={32} /> Your Holistic ID
                         </CardTitle>
-                        <CardDescription className="text-gray-100">
+                        <CardDescription className="text-gray-100 mb-4">
                             Your unified digital identity and trust score
                         </CardDescription>
+                        {hasPseudonym && (
+                            <Badge
+                                variant="secondary"
+                                className="text-sm py-1 px-3 bg-white/20 text-white"
+                            >
+                                <User size={14} className="mr-1" />
+                                {pseudonym}
+                            </Badge>
+                        )}
                     </div>
                     <TooltipProvider>
                         <Tooltip>
@@ -189,7 +214,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
                         </Tooltip>
                     </TooltipProvider>
                 </div>
-                <div className="mt-4">
+                <div className="mt-6">
                     <TwitterProfile
                         followers_count={followers_count}
                         following_count={following_count}

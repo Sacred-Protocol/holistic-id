@@ -72,6 +72,8 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
+    const [pseudonym, setPseudonym] = useState('');
+    const [hasPseudonym, setHasPseudonym] = useState(false);
 
     useEffect(() => {
         const twitterData = JSON.parse(
@@ -82,6 +84,12 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
             localStorage.getItem('googleProviderData') || '{}'
         );
         setGoogleName(googleData?.name);
+
+        const storedPseudonym = localStorage.getItem('userPseudonym');
+        if (storedPseudonym) {
+            setPseudonym(storedPseudonym);
+            setHasPseudonym(true);
+        }
 
         if (twitterData) {
             const {
@@ -151,14 +159,25 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     return (
         <Card className="w-full max-w-3xl mx-auto mt-44">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-                <CardTitle className="text-3xl font-bold flex items-center gap-2">
-                    <Shield size={32} /> {userData.name || googleName}'s
-                    Holistic ID
-                </CardTitle>
-                <CardDescription className="text-gray-100">
-                    Public profile and trust score
-                </CardDescription>
-                <div className="mt-4">
+                <div className="mb-4">
+                    <CardTitle className="text-3xl font-bold flex items-center gap-2 mb-2">
+                        <Shield size={32} /> {userData.name || googleName}'s
+                        Holistic ID
+                    </CardTitle>
+                    <CardDescription className="text-gray-100">
+                        Public profile and trust score
+                    </CardDescription>
+                </div>
+                {hasPseudonym && (
+                    <Badge
+                        variant="secondary"
+                        className="text-sm py-1 px-3 bg-white/20 text-white mb-4"
+                    >
+                        <User size={14} className="mr-1" />
+                        {pseudonym}
+                    </Badge>
+                )}
+                <div className="mt-6">
                     <TwitterProfile
                         followers_count={followers_count}
                         following_count={following_count}
@@ -189,8 +208,8 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                         </div>
                     </div>
                     <p className="text-sm text-gray-600 mt-2">
-                        This score reflects {userData.name}'s overall digital
-                        reputation.
+                        This score reflects {userData?.name || googleName}'s
+                        overall digital reputation.
                     </p>
                 </div>
 
@@ -288,7 +307,10 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                             <User className="text-gray-400" />
                             <div>
                                 <p className="text-sm text-gray-600">Name</p>
-                                <p className="font-medium">{userData.name}</p>
+                                <p className="font-medium">
+                                    {' '}
+                                    {userData?.name || googleName}
+                                </p>
                             </div>
                         </div>
                         <div className="flex items-center gap-2">
