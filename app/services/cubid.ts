@@ -25,11 +25,11 @@ interface CreateUserResponse {
 
 interface UserData {
     name: string;
-    address: string;
+    placename: string;
     country: string;
     coordinates: {
         lat: number;
-        lon: number;
+        lng: number;
     };
     is_human: string;
     error: string | null;

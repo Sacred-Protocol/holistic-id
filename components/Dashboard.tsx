@@ -30,11 +30,11 @@ import TwitterProfile from './TwitterProfile';
 
 interface UserData {
     name: string;
-    address: string;
+    placename: string;
     country: string;
     coordinates: {
         lat: number;
-        lon: number;
+        lng: number;
     };
     is_human: string;
 }
@@ -65,6 +65,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const [following_count, setFollowingCount] = useState(0);
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
+    const [googleName, setGoogleName] = useState('');
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
@@ -73,6 +74,11 @@ export const UserDashboard = ({ email }: { email: string }) => {
         const twitterData = JSON.parse(
             localStorage.getItem('twitterProviderData') || '{}'
         );
+
+        const googleData = JSON.parse(
+            localStorage.getItem('googleProviderData') || '{}'
+        );
+        setGoogleName(googleData?.name);
 
         if (twitterData) {
             const {
@@ -273,7 +279,9 @@ export const UserDashboard = ({ email }: { email: string }) => {
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <p className="text-sm text-gray-600">Name</p>
-                            <p className="font-medium">{userData?.name}</p>
+                            <p className="font-medium">
+                                {userData?.name || googleName}
+                            </p>
                         </div>
                         <div>
                             <p className="text-sm text-gray-600">Country</p>
@@ -281,7 +289,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
                         </div>
                         <div className="col-span-2">
                             <p className="text-sm text-gray-600">Address</p>
-                            <p className="font-medium">{userData?.address}</p>
+                            <p className="font-medium">{userData?.placename}</p>
                         </div>
                     </div>
                 </div>

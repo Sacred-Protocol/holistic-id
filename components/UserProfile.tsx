@@ -36,11 +36,11 @@ import TwitterProfile from './TwitterProfile';
 
 interface UserData {
     name: string;
-    address: string;
+    placename: string;
     country: string;
     coordinates: {
         lat: number;
-        lon: number;
+        lng: number;
     };
     is_human: string;
 }
@@ -68,6 +68,7 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
     const [following_count, setFollowingCount] = useState(0);
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
+    const [googleName, setGoogleName] = useState('');
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
@@ -76,6 +77,11 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
         const twitterData = JSON.parse(
             localStorage.getItem('twitterProviderData') || '{}'
         );
+
+        const googleData = JSON.parse(
+            localStorage.getItem('googleProviderData') || '{}'
+        );
+        setGoogleName(googleData?.name);
 
         if (twitterData) {
             const {
@@ -146,7 +152,8 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
         <Card className="w-full max-w-3xl mx-auto mt-44">
             <CardHeader className="bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
                 <CardTitle className="text-3xl font-bold flex items-center gap-2">
-                    <Shield size={32} /> {userData.name}'s Holistic ID
+                    <Shield size={32} /> {userData.name || googleName}'s
+                    Holistic ID
                 </CardTitle>
                 <CardDescription className="text-gray-100">
                     Public profile and trust score
@@ -263,7 +270,7 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                 </p>
                                 <p className="font-medium">
                                     Lat: {userData.coordinates.lat?.toFixed(2)},
-                                    Lon: {userData.coordinates.lon?.toFixed(2)}
+                                    Lon: {userData.coordinates.lng?.toFixed(2)}
                                 </p>
                             </div>
                         </div>
