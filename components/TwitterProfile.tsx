@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Twitter, Users, UserPlus, MessageSquare } from 'lucide-react';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import {
@@ -7,6 +7,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { getBalance, getUserAddress } from '@/app/services/tipjoy';
 
 interface TwitterProfileProps {
     followers_count: number;
@@ -36,6 +37,19 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
     tweet_count,
     username,
 }) => {
+    const [joyAddress, setJoyAddress] = useState('');
+    const [joyBalance, setJoyBalance] = useState(0);
+
+    useEffect(() => {
+        getUserAddress(username).then((address) => {
+            if (address) {
+                setJoyAddress(address);
+                getBalance(address).then((balance) => {
+                    setJoyBalance(balance);
+                });
+            }
+        });
+    }, [username]);
     return (
         <div className="flex items-center space-x-4 bg-white/10 backdrop-blur-md rounded-lg p-3 shadow-lg">
             <Avatar className="w-16 h-16 border-2 border-white">

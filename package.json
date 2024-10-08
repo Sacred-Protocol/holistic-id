@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ethersproject/bignumber": "^5.7.0",
+    "@permaweb/aoconnect": "^0.0.59",
     "@radix-ui/react-avatar": "^1.1.1",
     "@radix-ui/react-progress": "^1.1.0",
     "@radix-ui/react-slot": "^1.1.0",
@@ -23,7 +25,8 @@
     "react-dom": "^18",
     "tailwind-merge": "^2.5.3",
     "tailwindcss-animate": "^1.0.7",
-    "twitter-api-v2": "^1.18.0"
+    "twitter-api-v2": "^1.18.0",
+    "warp-arbundles": "^1.0.4"
   },
   "devDependencies": {
     "@types/node": "^20",
