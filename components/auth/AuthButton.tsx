@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { signIn, signOut, useSession } from 'next-auth/react';
 import { createUser, fetchIdentity } from '@/app/services/cubid';
-import { useRouter } from 'next/navigation';
 import {
     Tooltip,
     TooltipContent,
@@ -13,16 +12,15 @@ import { Loader2, Twitter, Mail } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 const AuthButton: React.FC = () => {
-    const [localData, setLocalData] = useState<any>(null);
-
     const { data: session, status, update } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [authStep, setAuthStep] = useState<
         'initial' | 'twitter' | 'google' | 'complete'
     >('initial');
     const [progress, setProgress] = useState(0);
-    const router = useRouter();
-    const providerData = session?.providers || localData;
+    const [hasTwitter, setHasTwitter] = useState(false);
+    const [hasGoogle, setHasGoogle] = useState(false);
+    const [email, setEmail] = useState('');
 
     useEffect(() => {
         if (status === 'authenticated' && session?.providers) {
@@ -35,37 +33,70 @@ const AuthButton: React.FC = () => {
     }, [session, status]);
 
     useEffect(() => {
-        // Retrieve data from localStorage if session is not available
-        if (status !== 'loading' && !session) {
-            const storedData = localStorage.getItem('providerData');
-            if (storedData) {
-                setLocalData(JSON.parse(storedData));
+        if (status === 'authenticated' && session?.providers) {
+            const storedGoogleData = JSON.parse(
+                localStorage.getItem('googleProviderData') || '{}'
+            );
+            const storedTwitterData = JSON.parse(
+                localStorage.getItem('twitterProviderData') || '{}'
+            );
+
+            console.log('before:', { storedGoogleData, storedTwitterData });
+
+            // Update localStorage with current session data
+            if (
+                Object.keys(session.providers.google || {}).length &&
+                JSON.stringify(session.providers.google) !== '{}'
+            ) {
+                localStorage.setItem(
+                    'googleProviderData',
+                    JSON.stringify(session.providers.google)
+                );
+            }
+
+            if (
+                Object.keys(session.providers.twitter || {}).length &&
+                JSON.stringify(session.providers.twitter) !== '{}'
+            ) {
+                localStorage.setItem(
+                    'twitterProviderData',
+                    JSON.stringify(session.providers.twitter)
+                );
+            }
+
+            const updatedGoogleData = JSON.parse(
+                localStorage.getItem('googleProviderData') || '{}'
+            );
+            const updatedTwitterData = JSON.parse(
+                localStorage.getItem('twitterProviderData') || '{}'
+            );
+
+            if (!Object.keys(updatedTwitterData).length) {
+                setHasTwitter(false);
+            } else {
+                setHasTwitter(true);
+            }
+
+            if (!Object.keys(updatedGoogleData).length) {
+                setEmail('');
+                setHasGoogle(false);
+            } else {
+                setEmail(updatedGoogleData.email);
+                setHasGoogle(true);
             }
         }
-    }, [session, status]);
+    }, [session]);
+
     useEffect(() => {
         if (status === 'authenticated') {
-            const hasTwitter = session?.providers?.twitter?.name;
-            const hasGoogle = session?.providers?.google?.email;
-            console.log({ hasTwitter, hasGoogle });
             if (hasTwitter && hasGoogle) {
-                handleAuthentication(
-                    session?.providers?.google?.email as string
-                );
+                handleAuthentication(email as string);
                 setAuthStep('complete');
                 setProgress(100);
-            } else if (
-                session?.providers?.twitter?.name &&
-                !session?.providers?.google?.email
-            ) {
-                console.log('step is google');
+            } else if (hasTwitter && !hasGoogle) {
                 setAuthStep('google');
                 setProgress(50);
-            } else if (
-                !session?.providers?.twitter?.name &&
-                session?.providers?.google?.email
-            ) {
-                console.log('step is twitter');
+            } else if (!hasTwitter && hasGoogle) {
                 setAuthStep('twitter');
                 setProgress(50);
             }
@@ -131,17 +162,17 @@ const AuthButton: React.FC = () => {
                         <Button
                             onClick={() => handleSignIn('twitter')}
                             className="w-full"
-                            disabled={session?.providers?.twitter?.name}
+                            disabled={hasTwitter}
                         >
                             <Twitter className="mr-2 h-4 w-4" />
-                            {session?.providers?.twitter?.name
+                            {hasTwitter
                                 ? 'Twitter Connected'
                                 : 'Connect Twitter'}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>
-                            {session?.providers?.twitter?.name
+                            {hasTwitter
                                 ? 'Twitter account connected'
                                 : 'Connect your Twitter account'}
                         </p>
@@ -154,17 +185,15 @@ const AuthButton: React.FC = () => {
                         <Button
                             onClick={() => handleSignIn('google')}
                             className="w-full"
-                            disabled={session?.providers?.google?.email}
+                            disabled={hasGoogle}
                         >
                             <Mail className="mr-2 h-4 w-4" />
-                            {session?.providers?.google?.email
-                                ? 'Google Connected'
-                                : 'Connect Google'}
+                            {hasGoogle ? 'Google Connected' : 'Connect Google'}
                         </Button>
                     </TooltipTrigger>
                     <TooltipContent>
                         <p>
-                            {session?.providers?.google?.email
+                            {hasGoogle
                                 ? 'Google account connected'
                                 : 'Connect your Google account'}
                         </p>

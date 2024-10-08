@@ -65,6 +65,8 @@ const authOptions: NextAuthOptions = {
             return updatedSession;
         },
     },
+    debug: true,
+
     secret: process.env.NEXTAUTH_SECRET,
 };
 

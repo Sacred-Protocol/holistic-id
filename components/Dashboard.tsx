@@ -52,6 +52,7 @@ interface StampDetail {
 }
 
 export const UserDashboard = ({ email }: { email: string }) => {
+    console.log('dashboard', email);
     const [userData, setUserData] = useState<UserData | null>(null);
     const [userScore, setUserScore] = useState<UserScore | null>(null);
     const [stampDetails, setStampDetails] = useState<StampDetail[]>([]);
@@ -67,6 +68,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
         const initializeUser = async () => {
             try {
                 const userResponse = await createUser(email);
+                console.log('user response', email, userResponse);
                 setUserId(userResponse.user_id);
 
                 const [userData, userScore, identity] = await Promise.all([
@@ -94,9 +96,11 @@ export const UserDashboard = ({ email }: { email: string }) => {
 
     const handleUpdateProfile = () => {
         if (userId) {
-            const reputationUrl = `https://allow.cubid.me/pii?uid=${userId}&redirect_ui=${encodeURIComponent(
+            const reputationUrl = `https://allow.cubid.me/allow?page_id=31&uid=${userId}&redirect_ui=${encodeURIComponent(
                 window.location.origin
             )}`;
+
+            console.dir({ reputationUrl, userId });
             router.push(reputationUrl);
         }
     };
