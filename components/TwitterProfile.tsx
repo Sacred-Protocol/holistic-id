@@ -131,7 +131,7 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
                                         <Coins className="w-4 h-4 mr-1 inline-block" />
                                         <span>
                                             {' '}
-                                            Your TipJOY Balance:{' '}
+                                            Your TipJoy Balance:{' '}
                                             {formatNumber(joyBalance)} JOY
                                         </span>
                                     </Button>
