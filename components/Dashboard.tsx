@@ -46,10 +46,8 @@ interface UserScore {
 
 interface StampDetail {
     stamp_type: string;
-    share_type: string;
     value: string;
-    status: 'verified' | 'unverified';
-    verified_date?: string;
+    status: 'Verified' | 'Unverified';
 }
 
 export const UserDashboard = ({ email }: { email: string }) => {
@@ -237,12 +235,12 @@ export const UserDashboard = ({ email }: { email: string }) => {
                                     <TooltipTrigger asChild>
                                         <div
                                             className={`p-3 rounded-lg flex items-center gap-2 ${
-                                                stamp.status === 'verified'
+                                                stamp.status === 'Verified'
                                                     ? 'bg-green-100'
                                                     : 'bg-gray-100'
                                             }`}
                                         >
-                                            {stamp.status === 'verified' ? (
+                                            {stamp.status === 'Verified' ? (
                                                 <Check className="text-green-600" />
                                             ) : (
                                                 <AlertCircle className="text-yellow-600" />
@@ -252,7 +250,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
                                             </span>
                                             <Badge
                                                 variant={
-                                                    stamp.status === 'verified'
+                                                    stamp.status === 'Verified'
                                                         ? 'default'
                                                         : 'secondary'
                                                 }
@@ -263,9 +261,9 @@ export const UserDashboard = ({ email }: { email: string }) => {
                                     </TooltipTrigger>
                                     <TooltipContent>
                                         <p>
-                                            {stamp.status === 'verified'
-                                                ? `Verified on: ${stamp.verified_date}`
-                                                : 'Not yet verified'}
+                                            {stamp.status === 'Verified'
+                                                ? `Verified`
+                                                : ''}
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>

@@ -4,10 +4,8 @@ const API_BASE_URL = 'https://passport.cubid.me/api';
 
 interface StampDetail {
     stamp_type: string;
-    share_type: string;
     value: string;
-    status: 'verified' | 'unverified';
-    verified_date?: string;
+    status: 'Verified' | 'Unverified';
 }
 
 interface FetchIdentityResponse {

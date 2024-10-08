@@ -52,10 +52,8 @@ interface UserScore {
 
 interface StampDetail {
     stamp_type: string;
-    share_type: string;
     value: string;
-    status: 'verified' | 'unverified';
-    verified_date?: string;
+    status: 'Verified' | 'Unverified';
 }
 
 const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
@@ -205,12 +203,12 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                     <TooltipTrigger asChild>
                                         <div
                                             className={`p-3 rounded-lg flex items-center gap-2 ${
-                                                stamp.status === 'verified'
+                                                stamp.status === 'Verified'
                                                     ? 'bg-green-100'
                                                     : 'bg-gray-100'
                                             }`}
                                         >
-                                            {stamp.status === 'verified' ? (
+                                            {stamp.status === 'Verified' ? (
                                                 <Check className="text-green-600" />
                                             ) : (
                                                 <AlertCircle className="text-yellow-600" />
@@ -220,7 +218,7 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                             </span>
                                             <Badge
                                                 variant={
-                                                    stamp.status === 'verified'
+                                                    stamp.status === 'Verified'
                                                         ? 'default'
                                                         : 'secondary'
                                                 }
@@ -231,9 +229,9 @@ const UserProfile: React.FC<{ userId: string }> = ({ userId }) => {
                                     </TooltipTrigger>
                                     <TooltipContent>
                                         <p>
-                                            {stamp.status === 'verified'
-                                                ? `Verified on: ${stamp.verified_date}`
-                                                : 'Not yet verified'}
+                                            {stamp.status === 'Verified'
+                                                ? `Verified`
+                                                : ''}
                                         </p>
                                     </TooltipContent>
                                 </Tooltip>
