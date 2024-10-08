@@ -33,8 +33,6 @@ export default function Home() {
                 localStorage.getItem('twitterProviderData') || '{}'
             );
 
-            console.log('before:', { storedGoogleData, storedTwitterData });
-
             // Update localStorage with current session data
             if (
                 Object.keys(session.providers.google || {}).length &&

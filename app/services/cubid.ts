@@ -64,7 +64,6 @@ export const createUser = async (
     email: string
 ): Promise<CreateUserResponse> => {
     try {
-        console.log('api key', process.env.NEXT_PUBLIC_CUBID_API_KEY);
         const response = await axios.post<CreateUserResponse>(
             `${API_BASE_URL}/v2/create_user`,
             {
