@@ -316,10 +316,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
                                                     {stamp.status}
                                                 </Badge>
                                             </div>
-                                            <p
-                                                className="text-sm text-gray-600 truncate"
-                                                title={stamp.value}
-                                            >
+                                            <p className="text-sm text-gray-600 truncate">
                                                 {truncateValue(stamp.value)}
                                             </p>
                                         </div>
@@ -331,7 +328,6 @@ export const UserDashboard = ({ email }: { email: string }) => {
                                         <p className="font-medium">
                                             {stamp.stamp_type} Verification
                                         </p>
-                                        <p className="text-sm">{stamp.value}</p>
                                         {stamp.status === 'Verified' && (
                                             <p className="text-xs text-green-600 mt-1">
                                                 ✓ Verified on{' '}

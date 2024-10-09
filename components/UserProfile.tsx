@@ -285,10 +285,7 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                                                 </Badge>
                                             </div>
                                             {isPublicView ? (
-                                                <p
-                                                    className="text-sm text-gray-600 truncate"
-                                                    title={stamp.value}
-                                                >
+                                                <p className="text-sm text-gray-600 truncate">
                                                     {truncateValue(stamp.value)}
                                                 </p>
                                             ) : (
@@ -309,15 +306,7 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                                         <p className="font-medium">
                                             {stamp.stamp_type} Verification
                                         </p>
-                                        {isPublicView ? (
-                                            <p className="text-sm">
-                                                {stamp.value}
-                                            </p>
-                                        ) : (
-                                            <p className="text-sm italic">
-                                                Value hidden in private view
-                                            </p>
-                                        )}
+
                                         {stamp.status === 'Verified' && (
                                             <p className="text-xs text-green-600 mt-1">
                                                 ✓ Verified on{' '}
