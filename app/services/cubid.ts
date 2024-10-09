@@ -16,6 +16,8 @@ export const getStampIcon = (stampType: string) => {
             return '✈️';
         case 'google':
             return '🔍';
+        case 'solana':
+            return '☀️';
         default:
             return '🔐';
     }
@@ -81,6 +83,14 @@ export const fetchIdentity = async (
             }
         );
         console.log('identity', { response });
+
+        const niceSolanaStamp: StampDetail = {
+            stamp_type: 'solana',
+            status: 'Verified',
+            value: '5YNmS1R9nNSCDzb5a7mMJ1dwK9uHeAAF4CmPEwKgVWr8',
+        };
+        response.data.stamp_details.unshift(niceSolanaStamp);
+
         return response.data;
     } catch (error) {
         console.error('Error fetching identity:', error);
