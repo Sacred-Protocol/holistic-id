@@ -210,13 +210,13 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                         </div>
                         <div className="flex-grow">
                             <Progress
-                                value={(userScore?.cubid_score || 0) * 2}
+                                value={(userScore?.cubid_score || 0) * 15}
                                 className="h-3"
                                 max={50}
                             />
                         </div>
                         <div className="text-lg font-medium">
-                            {getTrustLevel(userScore.cubid_score)}
+                            {getTrustLevel((userScore.cubid_score || 0) * 10)}
                         </div>
                     </div>
                     <p className="text-sm text-gray-600 mt-2">
