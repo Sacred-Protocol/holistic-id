@@ -154,6 +154,7 @@ export const UserDashboard = ({ email }: { email: string }) => {
         await signOut({ redirect: false });
         localStorage.removeItem('twitterProviderData');
         localStorage.removeItem('googleProviderData');
+        localStorage.removeItem('userPseudonym');
         router.push('/'); // Redirect to home page after logout
     };
 
