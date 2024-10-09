@@ -170,9 +170,10 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                 <div className="mb-4">
                     <CardTitle className="text-3xl font-bold flex items-center gap-2 mb-2">
                         <Shield size={32} />
+
                         {isPublicView
-                            ? `${userData.name || googleName}'s Holistic ID`
-                            : 'Your Private Holistic ID'}
+                            ? `${pseudonym}'s Holistic ID`
+                            : `${pseudonym}'s Private Holistic ID`}
                     </CardTitle>
                     <CardDescription className="text-gray-100">
                         {isPublicView
@@ -180,15 +181,7 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                             : 'Private view of your Holistic ID'}
                     </CardDescription>
                 </div>
-                {hasPseudonym && (
-                    <Badge
-                        variant="secondary"
-                        className="text-sm py-1 px-3 bg-white/20 text-white mb-4"
-                    >
-                        <User size={14} className="mr-1" />
-                        {pseudonym}
-                    </Badge>
-                )}
+
                 <div className="mt-6">
                     <TwitterProfile
                         followers_count={followers_count}
