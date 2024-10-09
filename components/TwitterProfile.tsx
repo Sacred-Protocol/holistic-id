@@ -79,7 +79,8 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>
-                                    {followers_count.toLocaleString()} Followers
+                                    {followers_count?.toLocaleString()}{' '}
+                                    Followers
                                 </p>
                             </TooltipContent>
                         </Tooltip>
@@ -94,7 +95,8 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
                             </TooltipTrigger>
                             <TooltipContent>
                                 <p>
-                                    {following_count.toLocaleString()} Following
+                                    {following_count?.toLocaleString()}{' '}
+                                    Following
                                 </p>
                             </TooltipContent>
                         </Tooltip>
@@ -108,7 +110,7 @@ const TwitterProfile: React.FC<TwitterProfileProps> = ({
                                 </div>
                             </TooltipTrigger>
                             <TooltipContent>
-                                <p>{tweet_count.toLocaleString()} Tweets</p>
+                                <p>{tweet_count?.toLocaleString()} Tweets</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>

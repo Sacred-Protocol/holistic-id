@@ -206,7 +206,7 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                     <h3 className="text-xl font-semibold mb-2">Trust Score</h3>
                     <div className="flex items-center gap-4">
                         <div className="text-4xl font-bold text-blue-600">
-                            {userScore.cubid_score.toLocaleString('en-US')}
+                            {userScore.cubid_score?.toLocaleString('en-US')}
                         </div>
                         <div className="flex-grow">
                             <Progress
