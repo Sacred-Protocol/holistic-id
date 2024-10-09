@@ -330,52 +330,6 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                         ))}
                     </div>
                 </div>
-
-                {isPublicView && (
-                    <div>
-                        <h3 className="text-xl font-semibold mb-3">
-                            Personal Information
-                        </h3>
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="flex items-center gap-2">
-                                <User className="text-gray-400" />
-                                <div>
-                                    <p className="text-sm text-gray-600">
-                                        Name
-                                    </p>
-                                    <p className="font-medium">
-                                        {userData?.name || googleName}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-center gap-2">
-                                <Globe className="text-gray-400" />
-                                <div>
-                                    <p className="text-sm text-gray-600">
-                                        Country
-                                    </p>
-                                    <p className="font-medium">
-                                        {userData.country}
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="col-span-2 flex items-center gap-2">
-                                <MapPin className="text-gray-400" />
-                                <div>
-                                    <p className="text-sm text-gray-600">
-                                        Location
-                                    </p>
-                                    <p className="font-medium">
-                                        Lat:{' '}
-                                        {userData.coordinates.lat?.toFixed(2)},
-                                        Lon:{' '}
-                                        {userData.coordinates.lng?.toFixed(2)}
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
             </CardContent>
             <CardFooter className="flex justify-between bg-gray-50 rounded-b-lg p-4">
                 <Link href="/">

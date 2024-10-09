@@ -344,28 +344,6 @@ export const UserDashboard = ({ email }: { email: string }) => {
                         ))}
                     </div>
                 </div>
-
-                <div>
-                    <h3 className="text-xl font-semibold mb-3">
-                        Personal Information
-                    </h3>
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <p className="text-sm text-gray-600">Name</p>
-                            <p className="font-medium">
-                                {userData?.name || googleName}
-                            </p>
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-600">Country</p>
-                            <p className="font-medium">{userData?.country}</p>
-                        </div>
-                        <div className="col-span-2">
-                            <p className="text-sm text-gray-600">Address</p>
-                            <p className="font-medium">{userData?.placename}</p>
-                        </div>
-                    </div>
-                </div>
             </CardContent>
             <CardFooter className="flex justify-between bg-gray-50 rounded-b-lg p-4">
                 <Button variant="outline" onClick={handleUpdateProfile}>
