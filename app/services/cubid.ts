@@ -18,6 +18,8 @@ export const getStampIcon = (stampType: string) => {
             return '🔍';
         case 'solana':
             return '☀️';
+        case 'discord':
+            return '💬';
         default:
             return '🔐';
     }
