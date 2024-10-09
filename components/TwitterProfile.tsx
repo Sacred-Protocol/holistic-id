@@ -26,7 +26,7 @@ const formatNumber = (num: number) => {
     } else if (num >= 1000) {
         return (num / 1000).toFixed(1) + 'K';
     }
-    return num.toString();
+    return num?.toString() || '0';
 };
 
 const TwitterProfile: React.FC<TwitterProfileProps> = ({
