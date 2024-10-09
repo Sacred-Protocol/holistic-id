@@ -10,13 +10,19 @@ const authOptions: NextAuthOptions = {
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         }),
         TwitterProvider({
-            clientId: process.env.TWITTER_ID as string,
-            clientSecret: process.env.TWITTER_SECRET as string,
-            version: '2.0',
+            clientId: process.env.TWITTER_OLD_ID as string,
+            clientSecret: process.env.TWITTER_OLD_SECRET as string,
+            version: '1.0a',
             authorization: {
-                url: 'https://twitter.com/i/oauth2/authorize',
+                url: 'https://api.twitter.com/oauth/authenticate',
                 params: {
-                    scope: 'users.read tweet.read offline.access',
+                    scope: 'email users.read tweet.read offline.access',
+                },
+            },
+            userinfo: {
+                url: 'https://api.twitter.com/1.1/account/verify_credentials.json',
+                params: {
+                    include_email: 'true',
                 },
             },
         }),
@@ -34,8 +40,8 @@ const authOptions: NextAuthOptions = {
                     token.twitterProfile = {
                         name: profile?.name,
                         image: profile?.image,
-                        accessToken: account.access_token,
-                        refreshToken: account.refresh_token,
+                        accessToken: account.oauth_token,
+                        accessTokenSecret: account.oauth_token_secret,
                     };
                 }
             }
@@ -60,16 +66,25 @@ const authOptions: NextAuthOptions = {
             if (
                 session?.user?.image &&
                 !session?.providers?.twitter &&
-                !session?.user?.email
+                //@ts-ignore
+                token?.twitterProfile.accessToken
             ) {
-                updatedSession.providers.twitter = session.user;
+                updatedSession.providers.twitter = {
+                    ...session.user,
+                    email: token.email,
+                };
 
                 try {
                     //@ts-ignore
                     const accessToken = token?.twitterProfile.accessToken;
+
+                    const accessTokenSecret =
+                        //@ts-ignore
+                        token?.twitterProfile.accessTokenSecret;
                     if (accessToken) {
                         const userData = await fetchTwitterUserData(
-                            accessToken
+                            accessToken,
+                            accessTokenSecret
                         );
                         updatedSession.providers.twitter = {
                             ...session.user,
@@ -84,7 +99,7 @@ const authOptions: NextAuthOptions = {
             return updatedSession;
         },
     },
-    debug: true,
+    debug: false,
 
     secret: process.env.NEXTAUTH_SECRET,
 };

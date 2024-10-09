@@ -76,7 +76,6 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const [following_count, setFollowingCount] = useState(0);
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
-    const [googleName, setGoogleName] = useState('');
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
@@ -92,17 +91,11 @@ export const UserDashboard = ({ email }: { email: string }) => {
             localStorage.getItem('twitterProviderData') || '{}'
         );
 
-        const googleData = JSON.parse(
-            localStorage.getItem('googleProviderData') || '{}'
-        );
-
         const storedPseudonym = localStorage.getItem('userPseudonym');
         if (storedPseudonym) {
             setPseudonym(storedPseudonym);
             setHasPseudonym(true);
         }
-
-        setGoogleName(googleData?.name);
 
         if (twitterData) {
             const {
@@ -153,7 +146,6 @@ export const UserDashboard = ({ email }: { email: string }) => {
     const handleLogout = async () => {
         await signOut({ redirect: false });
         localStorage.removeItem('twitterProviderData');
-        localStorage.removeItem('googleProviderData');
         localStorage.removeItem('userPseudonym');
         router.push('/'); // Redirect to home page after logout
     };

@@ -74,7 +74,6 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
     const [following_count, setFollowingCount] = useState(0);
     const [image, setImage] = useState('');
     const [name, setName] = useState('');
-    const [googleName, setGoogleName] = useState('');
     const [profile_image_url, setProfileImage] = useState('');
     const [tweet_count, setTweetCount] = useState(0);
     const [username, setUserName] = useState('');
@@ -87,11 +86,6 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
         const twitterData = JSON.parse(
             localStorage.getItem('twitterProviderData') || '{}'
         );
-
-        const googleData = JSON.parse(
-            localStorage.getItem('googleProviderData') || '{}'
-        );
-        setGoogleName(googleData?.name);
 
         const storedPseudonym = localStorage.getItem('userPseudonym');
         if (storedPseudonym) {
@@ -214,10 +208,8 @@ const UserProfile: React.FC<{ userId: string; view: 'public' | 'private' }> = ({
                     </div>
                     <p className="text-sm text-gray-600 mt-2">
                         This score reflects{' '}
-                        {isPublicView
-                            ? `${userData?.name || googleName}'s`
-                            : 'your'}{' '}
-                        overall digital reputation.
+                        {isPublicView ? `${userData?.name}'s` : 'your'} overall
+                        digital reputation.
                     </p>
                 </div>
 

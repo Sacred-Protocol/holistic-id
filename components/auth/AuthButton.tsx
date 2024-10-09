@@ -16,11 +16,10 @@ const AuthButton: React.FC = () => {
     const { data: session, status, update } = useSession();
     const [isLoading, setIsLoading] = useState(false);
     const [authStep, setAuthStep] = useState<
-        'initial' | 'twitter' | 'google' | 'pseudonym' | 'complete'
+        'initial' | 'twitter' | 'pseudonym' | 'complete'
     >('initial');
     const [progress, setProgress] = useState(0);
     const [hasTwitter, setHasTwitter] = useState(false);
-    const [hasGoogle, setHasGoogle] = useState(false);
     const [hasPseudonym, setHasPseudonym] = useState(false);
     const [email, setEmail] = useState('');
     const [pseudonym, setPseudonym] = useState('');
@@ -42,22 +41,9 @@ const AuthButton: React.FC = () => {
 
     useEffect(() => {
         if (status === 'authenticated' && session?.providers) {
-            const storedGoogleData = JSON.parse(
-                localStorage.getItem('googleProviderData') || '{}'
-            );
             const storedTwitterData = JSON.parse(
                 localStorage.getItem('twitterProviderData') || '{}'
             );
-
-            if (
-                Object.keys(session.providers.google || {}).length &&
-                JSON.stringify(session.providers.google) !== '{}'
-            ) {
-                localStorage.setItem(
-                    'googleProviderData',
-                    JSON.stringify(session.providers.google)
-                );
-            }
 
             if (
                 Object.keys(session.providers.twitter || {}).length &&
@@ -69,40 +55,30 @@ const AuthButton: React.FC = () => {
                 );
             }
 
-            const updatedGoogleData = JSON.parse(
-                localStorage.getItem('googleProviderData') || '{}'
-            );
             const updatedTwitterData = JSON.parse(
                 localStorage.getItem('twitterProviderData') || '{}'
             );
 
             setHasTwitter(Object.keys(updatedTwitterData).length > 0);
-            setHasGoogle(Object.keys(updatedGoogleData).length > 0);
-            setEmail(updatedGoogleData.email || '');
+            setEmail(updatedTwitterData.email || '');
         }
     }, [session]);
 
     useEffect(() => {
         if (status === 'authenticated') {
-            if (hasTwitter && hasGoogle && hasPseudonym) {
+            if (hasTwitter && hasPseudonym) {
                 handleAuthentication(email);
                 setAuthStep('complete');
                 setProgress(100);
-            } else if (hasTwitter && hasGoogle && !hasPseudonym) {
+            } else if (hasTwitter && !hasPseudonym) {
                 setAuthStep('pseudonym');
                 setProgress(66);
-            } else if (
-                (hasTwitter && !hasGoogle) ||
-                (!hasTwitter && hasGoogle)
-            ) {
-                setAuthStep(hasTwitter ? 'google' : 'twitter');
-                setProgress(33);
             }
         } else {
             setAuthStep('initial');
             setProgress(0);
         }
-    }, [status, session, hasTwitter, hasGoogle, hasPseudonym]);
+    }, [status, session, hasTwitter, hasPseudonym]);
 
     const handleAuthentication = async (email: string) => {
         setIsLoading(true);
@@ -123,7 +99,7 @@ const AuthButton: React.FC = () => {
         }
     };
 
-    const handleSignIn = async (provider: 'twitter' | 'google') => {
+    const handleSignIn = async (provider: 'twitter') => {
         setIsLoading(true);
         try {
             await signIn(provider, { redirect: false });
@@ -184,27 +160,7 @@ const AuthButton: React.FC = () => {
                     </TooltipContent>
                 </Tooltip>
             </TooltipProvider>
-            <TooltipProvider>
-                <Tooltip>
-                    <TooltipTrigger asChild>
-                        <Button
-                            onClick={() => handleSignIn('google')}
-                            className="w-full"
-                            disabled={hasGoogle}
-                        >
-                            <Mail className="mr-2 h-4 w-4" />
-                            {hasGoogle ? 'Google Connected' : 'Connect Google'}
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                        <p>
-                            {hasGoogle
-                                ? 'Google account connected'
-                                : 'Connect your Google account'}
-                        </p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+
             {authStep === 'pseudonym' && (
                 <div className="space-y-2">
                     <Input
@@ -223,9 +179,7 @@ const AuthButton: React.FC = () => {
                     </Button>
                 </div>
             )}
-            {(authStep === 'twitter' ||
-                authStep === 'google' ||
-                authStep === 'pseudonym') && (
+            {(authStep === 'twitter' || authStep === 'pseudonym') && (
                 <p className="text-sm text-center text-gray-600">
                     {authStep === 'pseudonym'
                         ? 'Great! Now enter your pseudonym to complete your Holistic ID.'

@@ -21,30 +21,15 @@ export default function Home() {
     };
 
     const [hasTwitter, setHasTwitter] = useState(false);
-    const [hasGoogle, setHasGoogle] = useState(false);
     const [email, setEmail] = useState('');
     const [pseudonym, setPseudonym] = useState('');
     const [hasPseudonym, setHasPseudonym] = useState(false);
 
     useEffect(() => {
         if (status === 'authenticated' && session?.providers) {
-            const storedGoogleData = JSON.parse(
-                localStorage.getItem('googleProviderData') || '{}'
-            );
             const storedTwitterData = JSON.parse(
                 localStorage.getItem('twitterProviderData') || '{}'
             );
-
-            // Update localStorage with current session data
-            if (
-                Object.keys(session.providers.google || {}).length &&
-                JSON.stringify(session.providers.google) !== '{}'
-            ) {
-                localStorage.setItem(
-                    'googleProviderData',
-                    JSON.stringify(session.providers.google)
-                );
-            }
 
             if (
                 Object.keys(session.providers.twitter || {}).length &&
@@ -56,9 +41,6 @@ export default function Home() {
                 );
             }
 
-            const updatedGoogleData = JSON.parse(
-                localStorage.getItem('googleProviderData') || '{}'
-            );
             const updatedTwitterData = JSON.parse(
                 localStorage.getItem('twitterProviderData') || '{}'
             );
@@ -72,25 +54,15 @@ export default function Home() {
             if (!Object.keys(updatedTwitterData).length) {
                 setHasTwitter(false);
             } else {
+                setEmail(updatedTwitterData.email);
                 setHasTwitter(true);
-            }
-
-            if (!Object.keys(updatedGoogleData).length) {
-                setEmail('');
-                setHasGoogle(false);
-            } else {
-                setEmail(updatedGoogleData.email);
-                setHasGoogle(true);
             }
         }
     }, [session]);
 
     return (
         <main className="flex min-h-screen flex-col items-center justify-center p-24">
-            {status === 'authenticated' &&
-            hasTwitter &&
-            hasGoogle &&
-            hasPseudonym ? (
+            {status === 'authenticated' && hasTwitter && hasPseudonym ? (
                 <UserDashboard email={email} />
             ) : (
                 <Card className="w-[350px]">
